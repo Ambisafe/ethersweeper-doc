@@ -25,40 +25,44 @@ Running **./bin/ethersweeper -h** will produce usage information.
 $ ./bin/ethersweeper -h
 usage: ethersweeper [-h] [-v] [--conf CONF] [--state STATE]
                     [--assetaddress ASSETADDRESS] [--secret SECRET]
-                    [--confirmations CONFIRMATIONS] [--gasprice GASPRICE]
-                    [--gethnode GETHNODE] [--rpcbind RPCBIND]
-                    [--rpcport RPCPORT] [--rpcuser RPCUSER]
-                    [--rpcpassword RPCPASSWORD] [--logfile LOGFILE]
+                    [--confirmations CONFIRMATIONS] [--gas GAS]
+                    [--gasprice GASPRICE] [--gethnode GETHNODE]
+                    [--rpcbind RPCBIND] [--rpcport RPCPORT]
+                    [--rpcuser RPCUSER] [--rpcpassword RPCPASSWORD]
+                    [--logfile LOGFILE] [--unsafe UNSAFE]
 
 EtherSweeper
 
 Optional arguments:
   -h, --help            Show this help message and exit.
   -v, --version         Show program's version number and exit.
-  --conf CONF           Specify configuration file (default:
+  --conf CONF           Specify configuration file (default: 
                         /etc/ethersweeper.conf)
-  --state STATE         Json file to store the encrypted accounts. Backup
+  --state STATE         Json file to store the encrypted accounts. Backup 
                         regularly! (default: ethersweeper.json)
   --assetaddress ASSETADDRESS
-                        Ethereum address of the WeiToken-like contract
+                        Ethereum address of the WeiToken-like contract 
                         (default: 0x7660727d3cb947e807acead927ef3ede24c4a18d)
-  --secret SECRET       Random string to be used as password for private keys
+  --secret SECRET       Random string to be used as password for private keys 
                         encryption, mandatory
   --confirmations CONFIRMATIONS
-                        After how many confirmations perform the forwarding
+                        After how many confirmations perform the forwarding 
                         transaction (default: 6)
-  --gasprice GASPRICE   What gasPrice to use for forwarding (default:
+  --gas GAS             What gas to use for forwarding (default: 500000)
+  --gasprice GASPRICE   What gasPrice to use for forwarding (default: 
                         20000000000)
-  --gethnode GETHNODE   geth node to talk to (default: https://node.ambisafe.
-                        co)
-  --rpcbind RPCBIND     Bind to given address to listen for JSON-RPC
+  --gethnode GETHNODE   geth node to talk to (default: https://localhost:8545)
+                        Supernode service can be ordered at
+                        https://www.ambisafe.co/services/
+  --rpcbind RPCBIND     Bind to given address to listen for JSON-RPC 
                         connections (default: localhost)
-  --rpcport RPCPORT     Listen for JSON-RPC connections on RPCPORT (default:
+  --rpcport RPCPORT     Listen for JSON-RPC connections on RPCPORT (default: 
                         28545)
   --rpcuser RPCUSER     Username for RPC basic auth (default: none)
   --rpcpassword RPCPASSWORD
                         Password for RPC basic auth (default: none)
   --logfile LOGFILE     Log file location
+  --unsafe UNSAFE       Allow private keys export (default: false)
 ```
 
 Running EtherSweeper with no command line args will result in an error due to absence of only mandatory parameter `--secret`, which should be known only to responsible admins and used to encrypt/decrypt local private keys storage. After providing that paramenter, application will start using WEI4 asset contract of EToken's test environment at 0x7660727d3cb947e807acead927ef3ede24c4a18d.
@@ -94,6 +98,12 @@ $ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"addroute","params":["XE43W
 $ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"editroute","params":["XE43WE4ET00X1JW480KC","XE45EXMAMBIZFKH4KFSA"],"id":0}'
 {"jsonrpc":"2.0","result":"0x9aCAeF26AeE7776d89B1F2d337cb0D92903Bc2b6","id":0}
 
+$ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"stoproute","params":["XE43WE4ET00X1JW480KC"],"id":0}'
+{"jsonrpc":"2.0","result":"0x9aCAeF26AeE7776d89B1F2d337cb0D92903Bc2b6","id":0}
+
+$ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"startroute","params":["XE43WE4ET00X1JW480KC"],"id":0}'
+{"jsonrpc":"2.0","result":"0x9aCAeF26AeE7776d89B1F2d337cb0D92903Bc2b6","id":0}
+
 $ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"getroute","params":["XE45EXMAMBIZFKH4KFSA"],"id":0}'
 {"jsonrpc":"2.0","result":"0x9aCAeF26AeE7776d89B1F2d337cb0D92903Bc2b6","id":0}
 
@@ -105,6 +115,12 @@ $ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"listforwards","params":[],
 
 $ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"listforwards","params":["XE43WE4ET00X1JW480KC"],"id":0}'
 {"jsonrpc":"2.0","result":[{"icap":"XE43WE4ET00X1JW480KC","transactionHash":"0x6f44cd536bbf4dc25a1cb11be699e4a5969c5e7d45b3c7cd3de321ba8e905e6f"}],"id":0}
+
+$ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"exportpk","params":["someaddress"],"id":0}'
+{"jsonrpc":"2.0","result":"someprivatekey","id":0}
+
+$ curl localhost:28545 -d '{"jsonrpc":"2.0","method":"shutdown","params":[],"id":0}'
+{"jsonrpc":"2.0","result":"OK","id":0}
 ```
 
 # Example of usage from NodeJS
